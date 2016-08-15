@@ -31,7 +31,7 @@ class JsonTests: XCTestCase {
 
     func testConvertFromNilLiteral() {
         let value: Json = nil
-        XCTAssertEqual(value, Json.NullValue)
+        XCTAssertEqual(value, Json.nullValue)
     }
 
     func testConvertFromBooleanLiteral() {

@@ -19,13 +19,13 @@ public extension Json {
             return mapped
         case .ArrayValue(let array):
             return array.map { $0.anyValue }
-        case .BooleanValue(let bool):
+        case .booleanValue(let bool):
             return bool
-        case .NumberValue(let number):
+        case .numberValue(let number):
             return number
         case .StringValue(let string):
             return string
-        case .NullValue:
+        case .nullValue:
             return NSNull()
         }
     }
@@ -45,7 +45,7 @@ extension Json {
             // If we're coming from foundation, it will be an `NSNumber`.
             //This represents double, integer, and boolean.
         case let number as Double:
-            return .NumberValue(number)
+            return .numberValue(number)
         case let string as String:
             return .StringValue(string)
         case let object as [String : AnyObject]:
@@ -53,11 +53,11 @@ extension Json {
         case let array as [AnyObject]:
             return .ArrayValue(array.map(from))
         case _ as NSNull:
-            return .NullValue
+            return .nullValue
         default:
             fatalError("Unsupported foundation type")
         }
-        return .NullValue
+        return .nullValue
     }
     
     public static func from(_ any: [String : AnyObject]) -> Json {
@@ -70,9 +70,9 @@ extension Json {
 }
 
 extension Json {
-    public static func deserialize(_ data: NSData) throws -> Json {
-        let startPointer = UnsafePointer<UInt8>(data.bytes)
-        let bufferPointer = UnsafeBufferPointer(start: startPointer, count: data.length)
+    public static func deserialize(_ data: Data) throws -> Json {
+        let startPointer = UnsafePointer<UInt8>((data as NSData).bytes)
+        let bufferPointer = UnsafeBufferPointer(start: startPointer, count: data.count)
         return try deserialize(bufferPointer)
     }
 }

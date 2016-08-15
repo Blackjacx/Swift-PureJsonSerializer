@@ -102,43 +102,48 @@ class JsonDeserializerTests: XCTestCase {
     }
 
     func testTwitterJson() {
-        let json = try! Json.deserialize(complexJsonExample("tweets"))
+        let json = try! Json.deserialize(complexJsonExample(name: "tweets"))
         XCTAssertEqual(json["statuses"]![0]!["id_str"]!.stringValue, "250075927172759552")
     }
 
     func testStackexchangeJson() {
-        let json = try! Json.deserialize(complexJsonExample("stackoverflow-items"))
+        let json = try! Json.deserialize(complexJsonExample(name: "stackoverflow-items"))
         XCTAssertEqual(json["items"]![0]!["view_count"]!.intValue, 18711)
     }
 
 
     func testPerformanceExampleWithNSData() {
-        let jsonSource = complexJsonExample("tweets")
+        let jsonSource = complexJsonExample(name: "tweets")
 
-        self.measureBlock {
+        self.measure {
             let _ = try! Json.deserialize(jsonSource)
         }
     }
 
     func testPerformanceExampleWithString() {
-        let jsonSource = String(data: complexJsonExample("tweets"), encoding: NSUTF8StringEncoding)!
+        let jsonSource = String(data: complexJsonExample(name: "tweets") as Data, encoding: String.Encoding.utf8)!
 
-        self.measureBlock {
+        self.measure {
             let _ = try! Json.deserialize(jsonSource)
         }
     }
 
     func testPerformanceExampleInJSONSerialization() {
-        let jsonSource = complexJsonExample("tweets")
-        self.measureBlock {
-            let _: AnyObject? = try! NSJSONSerialization
-                .JSONObjectWithData(jsonSource, options: .MutableContainers)
+        let jsonSource = complexJsonExample(name: "tweets")
+        self.measure {
+            let _: AnyObject? = try! JSONSerialization
+                .jsonObject(with: jsonSource as Data, options: .mutableContainers)
         }
     }
 
-    func complexJsonExample(name: String) -> NSData {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let path = bundle.pathForResource(name, ofType: "json")!
-        return NSData(contentsOfFile: path)!
+    func complexJsonExample(name: String) -> Data {
+        let bundle = Bundle(for: self.dynamicType)
+        let url = bundle.url(forResource: name, withExtension: "json")!
+        do {
+            return try Data(contentsOf: url)
+        } catch {
+
+        }
+        return Data()
     }
 }
